@@ -1,0 +1,8 @@
+Objectif : Obtenir une liste de contacts sur Linkedin (Nom, Prénom, Poste, localisation). Ceci afin de recomposer les adresses mails avec une adresse déja connue
+    et faire une campagne de mailing.
+
+- Choix de la méthode :
+    - Checker si API Linkedin. Si oui, partir sur la méthode d'une requête
+    - Si pas d'API Linkedin, méthode Puppeteer
+
+- Etablir le plan
