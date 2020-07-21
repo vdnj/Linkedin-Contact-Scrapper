@@ -1,0 +1,22 @@
+{
+  "name": "linkedin-contact-scrapper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "linkedinContactScrapper.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vdnj/Linkedin-Contact-Scrapper.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vdnj/Linkedin-Contact-Scrapper/issues"
+  },
+  "homepage": "https://github.com/vdnj/Linkedin-Contact-Scrapper#readme",
+  "dependencies": {
+    "puppeteer": "^5.2.0"
+  }
+}
