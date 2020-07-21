@@ -18,10 +18,9 @@ let getInput = (question, variable) =>{
         return new Promise(function(resolve, reject) {
                 var ask = function() {
                   rl.question(question, function(answer) {
-                    variable = answer;
-                    if (variable) {
-                      resolve(variable, reject);
-                      datas[variable] = variable;
+                    if (answer) {
+                      resolve(answer, reject);
+                      datas[variable] = answer;
                     } else {
                       ask();
                     }
@@ -34,12 +33,19 @@ let getInput = (question, variable) =>{
 
 (async ()=>{
 
+        // Get Required Inputs
         await getInput("Entrer l'adresse email LinkedIn : ", 'email');
         await getInput("Entrer le mdp LinkedIn : ", 'password');
         await getInput("Entrer l'intitulé du poste recherché suivi de la société : ", 'jobAndCompany');
         await getInput("Entrer l'adresse email de référence : ", 'emailModel');
 
-        await lkdn.initialize();
+        // Initialize Browser and Login
+        await lkdn.initialize(datas);
         await lkdn.login(datas.email, datas.password);
+
+        // Search and Scrape Contacts
+        await lkdn.searchContacts(datas.jobAndCompany);
+        
+        
 
 })();
