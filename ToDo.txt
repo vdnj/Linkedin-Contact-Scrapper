@@ -1,8 +1,21 @@
 Objectif : Obtenir une liste de contacts sur Linkedin (Nom, Prénom, Poste, localisation). Ceci afin de recomposer les adresses mails avec une adresse déja connue
     et faire une campagne de mailing.
+Méthode retenue : Puppeteer (s'aider de la vidéo de DevTips ou de CaptainDev si besoin + du revueBot)
 
-- Choix de la méthode :
-    - Checker si API Linkedin. Si oui, partir sur la méthode d'une requête
-    - Si pas d'API Linkedin, méthode Puppeteer
+RoadMap :
 
-- Etablir le plan
+    - Faire la recherche sur Linkedin
+    - Stocker les infos dans un Objet avec propriété isValid si le nom contient 'LinkedIn', isValid: false et propriété emailShouldBe (recomposition de l'adresse avec exemple fourni)
+    - Générer Excel à partir de l'objet
+    - Déterminer les inputs nécessaires
+    - Coder
+
+-----------------
+
+Etape 1 - Recherche sur Linkedin:
+        - Go sur https://www.linkedin.com/login/fr?fromSignIn=true&trk=guest_homepage-basic_nav-header-signin
+        - Entrer email et pass puis click sur ok
+        - Dans le Input, taper "Nom du poste" puis "Nom du groupe / de l'entreprise"
+        - Extraire les infos sur la page actuelle
+        - Aller page suivante et extraire les infos
+        - Répéter jusqu'à la fin
