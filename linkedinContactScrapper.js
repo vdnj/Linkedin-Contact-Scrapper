@@ -1,5 +1,4 @@
 let lkdn = require('./linkedin');
-let xls = require('./xlsFilling');
 const readline = require("readline");
 const rl = readline.createInterface({
         input: process.stdin,
@@ -12,6 +11,8 @@ let datas = {
         jobAndCompany : '',
         emailModel : ''
 }
+
+let contacts;
 
 let getInput = (question, variable) =>{
 
@@ -44,8 +45,9 @@ let getInput = (question, variable) =>{
         await lkdn.login(datas.email, datas.password);
 
         // Search and Scrape Contacts
-        await lkdn.searchContacts(datas.jobAndCompany);
         
+        await lkdn.searchContacts(datas.jobAndCompany);
+        contacts = await lkdn.scrapeContacts(datas.emailModel);
         
 
 })();

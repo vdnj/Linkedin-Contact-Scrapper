@@ -50,16 +50,12 @@ const linkedin = {
     searchContacts: async (jobAndCompany)=>{
 
         await linkedin.page.type('input[placeholder="Recherche"]', (jobAndCompany + String.fromCharCode(13)) );
-        await linkedin.page.waitForSelector('ul[class="search-results__list"]');
+        await linkedin.page.waitFor('h3.search-results__total');
+        console.log('Recherche effectuée');
 
     },
 
     scrapeContacts: async (emailModel)=>{
-        // Scrapper la première page, puis : si boutton "Suivant" sans attribut "disabled", click dessus et on recommence, sinon fin du scrapping.
-
-        // Obtenir les infos et les classer dans datas (check https://www.youtube.com/watch?v=pixfH6yyqZk for help):
-        // FAIRE CETTE ETAPE EN 1er
-
         /* Trouver comment détecter prénom et nom car peuvent être inversés, en Caps ou non, seulement l'initiale du nom ...
         Lister les différentes possibilités :
             - Prénom NOM
@@ -69,6 +65,31 @@ const linkedin = {
         */
 
 
+        console.log('Scrapping démarré')
+        let contacts = {}
+
+        // Scrapper la première page, puis : si boutton "Suivant" sans attribut "disabled", click dessus et on recommence, sinon fin du scrapping.
+        // Obtenir les infos et les classer dans contacts (check https://www.youtube.com/watch?v=pixfH6yyqZk for help):
+        let results = await linkedin.page.evaluate(()=>{
+            let currentPageResults = [];
+            
+            items = document.querySelectorAll('div.search-result__info');
+
+            items.forEach(item=>{
+                name = item.querySelector('a').textContent.trim().split('\n')[0];
+                console.log(name);
+                currentPageResults.push({ name });
+            })
+
+            return currentPageResults;
+
+        })
+
+        results.forEach(result=>contacts.result.name = name)
+
+        console.log(contacts);
+
+        return contacts
     }
 
 
