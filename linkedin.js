@@ -55,41 +55,64 @@ const linkedin = {
 
     },
 
-    scrapeContacts: async (emailModel)=>{
-        /* Trouver comment détecter prénom et nom car peuvent être inversés, en Caps ou non, seulement l'initiale du nom ...
-        Lister les différentes possibilités :
-            - Prénom NOM
-            - Prénom N.
-            - Prénom Nom
-            - Prénom NOM1 NOM2     
+    scrapeResults: async (emailModel)=>{
+        /* Pour nom prénom trop de possibilités. Partir sur :
+        str.split(' ')[0] = prénom, le reste = nom. OK 9 fois sur 10.
+        
+        Scrapper la première page, puis : si boutton "Suivant" sans attribut "disabled", click dessus et on recommence, sinon fin du scrapping.
+        Obtenir les infos et les classer dans contacts (check https://www.youtube.com/watch?v=pixfH6yyqZk for help):
         */
-
 
         console.log('Scrapping démarré')
         let contacts = {}
+        let counter = 1;
 
-        // Scrapper la première page, puis : si boutton "Suivant" sans attribut "disabled", click dessus et on recommence, sinon fin du scrapping.
-        // Obtenir les infos et les classer dans contacts (check https://www.youtube.com/watch?v=pixfH6yyqZk for help):
-        let results = await linkedin.page.evaluate(()=>{
-            let currentPageResults = [];
-            
-            items = document.querySelectorAll('div.search-result__info');
+        // Block pour le scrapping d'une page, à intégrer dans une "do while" loop
+        
+        await linkedin.page.evaluate(()=>{
+            document.body.style.zoom = "45%";
+            window.scrollBy(0, 175);
+        }); // Pour charger l'ensemble de la page
+        await linkedin.page.waitFor(1000); 
 
-            items.forEach(item=>{
-                name = item.querySelector('a').textContent.trim().split('\n')[0];
-                console.log(name);
-                currentPageResults.push({ name });
-            })
+        let items = await linkedin.page.$$('div.search-result');
 
-            return currentPageResults;
+        for (const item of items){
+            let fullName = await item.$('span.actor-name');
+            fullName = await fullName.getProperty('innerText');
+            fullName = await fullName.jsonValue();
+            fullName = fullName.split(' ');
 
-        })
+            let name = fullName.shift();
+            let lastName = fullName.join(' ');
+  
+            let job = await item.$('p.subline-level-1');
+            job =  await job.getProperty('innerText');
+            job = await job.jsonValue();
 
-        results.forEach(result=>contacts.result.name = name)
+            let localisation = await item.$('p.subline-level-2');
+            localisation =  await localisation.getProperty('innerText');
+            localisation = await localisation.jsonValue();
 
-        console.log(contacts);
+            let isWorking = true;
+            let entreprise = await item.$('p.mt2', {timeout:1000});
+            if(entreprise){
+                entreprise = await entreprise.getProperty('innerText');
+                entreprise = await entreprise.jsonValue();
+                if(entreprise.includes('Entreprise précédente')){
+                    isWorking = false;
+                }
+            }
 
-        return contacts
+            if(isWorking){
+                contacts[counter] = {name, lastName, job, localisation};
+                counter ++;
+            }
+
+        }
+
+        console.table(contacts);
+
     }
 
 
