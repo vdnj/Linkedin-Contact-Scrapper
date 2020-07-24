@@ -4,14 +4,6 @@ Méthode retenue : Puppeteer (s'aider de la vidéo de DevTips ou de CaptainDev s
 
 RoadMap :
 
-    - Faire la recherche sur Linkedin
-    - Stocker les infos dans un Objet avec propriété isValid si le nom contient 'LinkedIn', isValid: false et propriété emailShouldBe (recomposition de l'adresse avec exemple fourni)
-    - Générer Excel à partir de l'objet
-    - Déterminer les inputs nécessaires
-    - Coder
-
------------------
-
         - Recherche sur Linkedin:
         - Go sur https://www.linkedin.com/login/fr?fromSignIn=true&trk=guest_homepage-basic_nav-header-signin
         - Entrer email et pass puis click sur ok
@@ -26,7 +18,7 @@ RoadMap :
 
 NOTES
     
-
     Hide password on input and get 1 + em
-    if (name === 'Utilisateur LinkedIn') --> on n'ajoute pas aux results
-    pour le isWorking : NOK ( testé sur CDT EIFFAGE ). Retourne entreprise précédente si le contact a déja travaillé à ce poste ailleurs. Retirer cette fonctionnalité.
+    Fonctionnalité pour cliquer sur le boutton suivant à implémenter. Ne fonctionne pas pour l'instant.
+----------------
+
