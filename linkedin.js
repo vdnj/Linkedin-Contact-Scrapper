@@ -80,8 +80,7 @@ const linkedin = {
     
             for (const item of items){
     
-                console.log('entering new Loop')
-    
+                // Partie Prénom + Nom
                 let fullName = await item.$('span.actor-name');
                 fullName = await fullName.getProperty('innerText');
                 fullName = await fullName.jsonValue();
@@ -93,54 +92,90 @@ const linkedin = {
                 let name = fullName.shift();
                 let lastName = fullName.join(' ');
       
+                // Partie Job
                 let job = await item.$('p.subline-level-1');
                 job =  await job.getProperty('innerText');
                 job = await job.jsonValue();
     
-                let localisation = await item.$('p.subline-level-2');
-                localisation =  await localisation.getProperty('innerText');
-                localisation = await localisation.jsonValue();
+                // Partie Localisation
+                let location = await item.$('p.subline-level-2');
+                location =  await location.getProperty('innerText');
+                location = await location.jsonValue();
     
-                let isWorking = true;
+                // Partie 'Toujours en poste'
+                let isWorking = false;
                 let entreprise = await item.$('p.mt2', {timeout:1000});
                 if(entreprise){
                     entreprise = await entreprise.getProperty('innerText');
                     entreprise = await entreprise.jsonValue();
-                    if( entreprise.toLowerCase().includes('précédente') && entreprise.toLowerCase().includes(company.toLowerCase())){
-                        isWorking = false;
+                    if(entreprise.toLowerCase().includes('actuelle') && entreprise.toLowerCase().includes(company.toLowerCase())){
+                        isWorking = true;
                     }
                 }
+                if(job.toLowerCase().includes(company.toLowerCase())){
+                    isWorking = true;
+                }
+                
+                /*
+                if( entreprise.toLowerCase().includes('précédente') && entreprise.toLowerCase().includes(company.toLowerCase())){
+                        isWorking = false;
+                    }
+                */
     
+                // Partie reconstitution de l'email
+                    // Obtention de la partie à MàJ et de la Base
+                let toUpdate = emailModel.split('@')[0];
+                let base = '@' + emailModel.split('@')[1];
+
+                    // Obtention du nombre de caractères à récupérer
+                let nameChars = toUpdate[toUpdate.indexOf('p')+1];
+                let lastNameChars = toUpdate[toUpdate.indexOf('n')+1];
+
+                // Obtention des parties prénom et nom à récupérer
+                let namePart = name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split('').filter(char=>char!==' ' && /^[a-z]+$/i.test(char)).join('');
+                let lastNamePart = lastName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split('').filter(char=>char!==' ' && /^[a-zà-ÿ]+$/i.test(char)).join('');
+                
+                if(Number(nameChars)){
+                    nameChars = Number(nameChars);
+                    namePart = namePart.substr(0, nameChars);
+                }
+                if(Number(lastNameChars)){
+                    lastNameChars = Number(lastNameChars);
+                    lastNamePart = lastNamePart.substr(0, lastNameChars);
+                }
+                
+                // Remplacement du prénom et du nom
+                toUpdate = toUpdate.replace(('p'+ toUpdate[toUpdate.indexOf('p')+1]), namePart);
+                toUpdate = toUpdate.replace(('n'+ toUpdate[toUpdate.indexOf('n')+1]), lastNamePart);
+
+                let email = toUpdate + base;
+
+
+                // Partie assignation des résultats obtenus 
                 if(isWorking && lastName !== 'LinkedIn'){
-                    contacts[counter] = {name, lastName, job, localisation};
+                    contacts[counter] = {name, lastName, job, email, location};
                     counter ++;
                 }
     
             }
     
-            console.table(contacts);
-    
             isNextPage = await linkedin.page.evaluate(()=>{
                 let suivant = document.querySelector('button[aria-label="Suivant"]');
                 if(suivant){
                     if(!suivant.hasAttribute('disabled')){
+                        suivant.click();
                         return true;
                     }
                 }
                 return false;
-            })
-            console.log(isNextPage);
-    
-            if(isNextPage){
-                let suivantBtn = await linkedin.page.$('button[aria-label="Suivant"]');
-                await linkedin.page.click(suivantBtn);
-                await linkedin.page.waitFor(2000);
-            }
+            });
+            await linkedin.page.waitFor(2000);
 
         }
 
-
-
+        console.log('Scrapping terminé. ' + counter + ' contacts obtenus')
+        console.table(contacts);
+        return contacts;
 
     }
 

@@ -1,19 +1,18 @@
-let lkdn = require('./linkedin');
+const lkdn = require('./linkedin');
 const readline = require("readline");
 const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout
     });
+const fs = require('fs');
 
-let datas = {
+const datas = {
         email : '',
         password : '',
         job: '',
         company: '',
         emailModel : ''
 }
-
-let contacts;
 
 let getInput = (question, variable) =>{
 
@@ -40,16 +39,18 @@ let getInput = (question, variable) =>{
         await getInput("Entrer le mdp LinkedIn : ", 'password');
         await getInput("Entrer l'intitulé du poste recherché: ", 'job');
         await getInput("Entrer la société recherchée: ", 'company');
-        await getInput("Entrer l'adresse email de référence : ", 'emailModel');
+        await getInput("Entrer l'adresse email de référence au format p1n*@dipostel.com : ", 'emailModel');
 
-        // Initialize Browser and Loginvalentin_dnj@outlook.es
-
+        // Initialize Browser and Login
         await lkdn.initialize(datas);
         await lkdn.login(datas);
 
         // Search and Scrape Contacts
-        
         await lkdn.searchContacts(datas);
-        await lkdn.scrapeResults(datas);
+        let contacts = await lkdn.scrapeResults(datas);
 
+        // Create JSON file
+        fs.writeFile('contacts.json', JSON.stringify(contacts), (err) => {
+          if (err) throw err;
+        });
 })();
