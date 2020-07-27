@@ -72,8 +72,4 @@ let getInput = (question, variable) =>{
         fs.writeFile('contacts.json', JSON.stringify(contacts), (err) => {
           if (err) throw err;
         });
-        // Create JSON file (To remove)
-        fs.writeFile('test.json', JSON.stringify(datas), (err) => {
-          if (err) throw err;
-        });
 })();

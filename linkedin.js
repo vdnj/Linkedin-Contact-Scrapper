@@ -49,7 +49,12 @@ const linkedin = {
 
     searchContacts: async ({job, company})=>{
 
-        await linkedin.page.type('input[placeholder="Recherche"]', (job + ' ' + company + String.fromCharCode(13)) );
+        //Replace placeholder by Recherche
+        try{
+            await linkedin.page.type('input[placeholder="Recherche"]', (job + ' ' + company + String.fromCharCode(13)) );
+        } catch(e){
+            await linkedin.page.type('input[placeholder="Chercher une personne, un poste, du contenu"]', (job + ' ' + company + String.fromCharCode(13)) );
+        }
         await linkedin.page.waitFor('h3.search-results__total');
         console.log('Recherche effectuée');
 
