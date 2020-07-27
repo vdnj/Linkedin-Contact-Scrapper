@@ -56,12 +56,6 @@ const linkedin = {
     },
 
     scrapeResults: async ({emailModel, company})=>{
-        /* Pour nom prénom trop de possibilités. Partir sur :
-        str.split(' ')[0] = prénom, le reste = nom. OK 9 fois sur 10.
-        
-        Scrapper la première page, puis : si boutton "Suivant" sans attribut "disabled", click dessus et on recommence, sinon fin du scrapping.
-        Obtenir les infos et les classer dans contacts (check https://www.youtube.com/watch?v=pixfH6yyqZk for help):
-        */
 
         console.log('Scrapping démarré')
         let contacts = {}
@@ -115,12 +109,6 @@ const linkedin = {
                 if(job.toLowerCase().includes(company.toLowerCase())){
                     isWorking = true;
                 }
-                
-                /*
-                if( entreprise.toLowerCase().includes('précédente') && entreprise.toLowerCase().includes(company.toLowerCase())){
-                        isWorking = false;
-                    }
-                */
     
                 // Partie reconstitution de l'email
                     // Obtention de la partie à MàJ et de la Base
@@ -131,7 +119,7 @@ const linkedin = {
                 let nameChars = toUpdate[toUpdate.indexOf('p')+1];
                 let lastNameChars = toUpdate[toUpdate.indexOf('n')+1];
 
-                // Obtention des parties prénom et nom à récupérer
+                    // Obtention des parties prénom et nom à récupérer
                 let namePart = name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split('').filter(char=>char!==' ' && /^[a-z]+$/i.test(char)).join('');
                 let lastNamePart = lastName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split('').filter(char=>char!==' ' && /^[a-zà-ÿ]+$/i.test(char)).join('');
                 
@@ -144,12 +132,11 @@ const linkedin = {
                     lastNamePart = lastNamePart.substr(0, lastNameChars);
                 }
                 
-                // Remplacement du prénom et du nom
+                    // Remplacement du prénom et du nom
                 toUpdate = toUpdate.replace(('p'+ toUpdate[toUpdate.indexOf('p')+1]), namePart);
                 toUpdate = toUpdate.replace(('n'+ toUpdate[toUpdate.indexOf('n')+1]), lastNamePart);
 
                 let email = toUpdate + base;
-
 
                 // Partie assignation des résultats obtenus 
                 if(isWorking && lastName !== 'LinkedIn'){

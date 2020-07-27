@@ -17,8 +17,27 @@ const datas = {
 let getInput = (question, variable) =>{
 
         return new Promise(function(resolve, reject) {
+ 
+          // Block to hide pass
+          if(variable==='password'){
+            console.log('Entrez le mot de passe :')
+            rl.stdoutMuted = true;
+          } else {
+            rl.stdoutMuted = false;
+          }
+
                 var ask = function() {
+
+                  // Block to hide pass
                   rl.question(question, function(answer) {
+                    rl._writeToOutput = function _writeToOutput(stringToWrite) {
+                      if (rl.stdoutMuted){
+                        rl.output.write("*");
+                      }else{
+                        rl.output.write(stringToWrite);
+                      }
+                    };
+
                     if (answer) {
                       resolve(answer, reject);
                       datas[variable] = answer;
@@ -51,6 +70,10 @@ let getInput = (question, variable) =>{
 
         // Create JSON file
         fs.writeFile('contacts.json', JSON.stringify(contacts), (err) => {
+          if (err) throw err;
+        });
+        // Create JSON file (To remove)
+        fs.writeFile('test.json', JSON.stringify(datas), (err) => {
           if (err) throw err;
         });
 })();

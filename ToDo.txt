@@ -21,7 +21,7 @@ NOTES
     Si job.toLC.includes(company.toLC) OU entreprise.toLC.includes('actuelle' et company.toLC) 
     Deco et fermer le navigateur
     enlever les logs inutiles
-    Hide password on input and get 1 + em
+    Hide password on input and get 1 + em. Quand ok, rmove
     Faire capture d 'ecran video et garder sur Mac
 ----------------
 
