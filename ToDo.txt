@@ -12,17 +12,16 @@ RoadMap :
         - Aller page suivante et extraire les infos
         - Répéter jusqu'à la fin
         - Sortir fichier json pour extraction des données sur excel
+        - Déconnexion
 
 
 -----------------
 
 NOTES
     
-    Si job.toLC.includes(company.toLC) OU entreprise.toLC.includes('actuelle' et company.toLC) 
-    Deco et fermer le navigateur
-    enlever les logs inutiles
-    Hide password on input and get 1 + em. Quand ok, rmove
-    Faire capture d 'ecran video et garder sur Mac
+    - Ajouter possibilité de filtre par entreprise actuelle
+    
+    - Faire capture d 'ecran video et garder sur Mac
 ----------------
 
 

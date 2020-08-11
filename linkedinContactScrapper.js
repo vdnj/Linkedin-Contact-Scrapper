@@ -11,6 +11,7 @@ const datas = {
         password : '',
         job: '',
         company: '',
+        filters: '',
         emailModel : ''
 }
 
@@ -20,7 +21,7 @@ let getInput = (question, variable) =>{
  
           // Block to hide pass
           if(variable==='password'){
-            console.log('Entrez le mot de passe :')
+            console.log('\nEntrez le mot de passe :')
             rl.stdoutMuted = true;
           } else {
             rl.stdoutMuted = false;
@@ -54,22 +55,40 @@ let getInput = (question, variable) =>{
 (async ()=>{
 
         // Get Required Inputs
-        await getInput("Entrer l'adresse email LinkedIn : ", 'email');
-        await getInput("Entrer le mdp LinkedIn : ", 'password');
-        await getInput("Entrer l'intitulé du poste recherché: ", 'job');
-        await getInput("Entrer la société recherchée: ", 'company');
-        await getInput("Entrer l'adresse email de référence au format p1n*@dipostel.com : ", 'emailModel');
+        await getInput("\nEntrer l'adresse email LinkedIn : ", 'email');
+        await getInput("\nEntrer le mdp LinkedIn : ", 'password');
+        await getInput("\nEntrer l'intitulé du poste recherché: ", 'job');
+        await getInput("\nEntrer la société recherchée: ", 'company');
+        await getInput("\nEntrer le numéro des cases à cocher dans le filtre 'Entreprise actuelle', séparé par des espaces.\n S'il n'y a pas de filtre, tapez NA: ", 'filters');
+        await getInput("\nEntrer l'adresse email de référence au format p1n*@dipostel.com : ", 'emailModel');
 
         // Initialize Browser and Login
         await lkdn.initialize(datas);
         await lkdn.login(datas);
 
         // Search and Scrape Contacts
-        await lkdn.searchContacts(datas);
-        let contacts = await lkdn.scrapeResults(datas);
+        let contacts;
+        try{
+          await lkdn.searchContacts(datas);
+          if(datas.filters!=='NA'){
+            await lkdn.applyFilters(datas);
+          }
+          contacts = await lkdn.scrapeResults(datas);
+          await lkdn.disconnect();
+        } catch(e) {
+          console.log(e);
+          await lkdn.disconnect();
+        }
 
         // Create JSON file
         fs.writeFile('contacts.json', JSON.stringify(contacts), (err) => {
           if (err) throw err;
         });
+
+        // Fermeture du process
+        let closeProcess = () =>{
+          return process.exit(0);
+        }
+        setTimeout(closeProcess,3000);
+
 })();
