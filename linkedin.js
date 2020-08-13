@@ -227,7 +227,7 @@ const linkedin = {
             let url = linkedin.page.url().split('');
             pageNum = [];
             for (let i=(url.length - 1); i>=0; i--){
-                if(Number(url[i])){
+                if(Number(url[i]) || url[i]==='0'){
                     pageNum.unshift(url[i]);
                 } else {
                     break
