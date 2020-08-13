@@ -62,26 +62,52 @@ const linkedin = {
 
     applyFilters: async ({filters})=>{
 
-        // Click sur le boutton filtre 'Entreprise Actuelle'
-        let entrActBtn = await linkedin.page.$('button[aria-controls="entreprises-actuelles-facet-values"]');
-        await entrActBtn.click();
+        // Click sur le boutton filtre 'Entreprise Actuelle'. Si ne le trouve pas de suite, cliquer sur 'Personnes' en 1er
+        let entrActBtn;
+        let persBtn;
+        try{
+            entrActBtn = await linkedin.page.$('button[aria-controls="entreprises-actuelles-facet-values"]');
+            await entrActBtn.click();
+        }catch(e){
+            persBtn = await linkedin.page.$('button.search-vertical-filter__filter-item-button');
+            await persBtn.click();
+            await linkedin.page.waitFor(2500);
+            entrActBtn = await linkedin.page.$('button[aria-controls="entreprises-actuelles-facet-values"]');
+            await entrActBtn.click();
+        }
         await linkedin.page.waitForSelector('input[placeholder="Ajouter une entreprise actuelle"]');
 
         // Plusieurs listes sur la page avec la même classe (1 seule est visible et nous intéresse)
         let lists = await linkedin.page.$$('ul.search-s-facet__list.pt3.ember-view');
-        let list = lists[lists.length-1];
+        let list = lists[lists.length-1]; // Parfois -2 au lieu de -1 --> voir prochain try block
 
         // Selection des propositions en fonction des filtres choisis
+        await linkedin.page.waitFor(500);
         let items = await list.$$('label');
         
-        itemsToClick = filters.split(' ');
-        for (const item of itemsToClick){
-            await items[Number(item)-1].click();
+        try{
+            itemsToClick = filters.split(' ');
+            for (const item of itemsToClick){
+                await items[Number(item)-1].click();
+            }
+        }catch(e){
+            list = lists[lists.length-2];
+            items = await list.$$('label');
+            itemsToClick = filters.split(' ');
+            for (const item of itemsToClick){
+                await items[Number(item)-1].click();
+            }
         }
-
-        let appliquerBtn = await linkedin.page.$$('button[data-control-name="filter_pill_apply"]');
-        appliquerBtn = appliquerBtn[appliquerBtn.length-1];
-        await appliquerBtn.click();
+        
+        // Click sur le boutton Appliquer
+        let appliquerBtns = await linkedin.page.$$('button[data-control-name="filter_pill_apply"]');
+        appliquerBtn = appliquerBtns[appliquerBtns.length-1]; // Parfois -2 au lieu de -1 --> voir prochain try block
+        try{
+            await appliquerBtn.click();
+        }catch(e){
+            appliquerBtn = appliquerBtns[appliquerBtns.length-2];
+            await appliquerBtn.click();
+        }
         await linkedin.page.waitFor(3000);
         console.log('Filtre(s) appliqué(s)');
 
@@ -89,7 +115,7 @@ const linkedin = {
 
     scrapeResults: async ({emailModel, company})=>{
 
-        console.log('Scrapping démarré')
+        console.log('Scrapping page n° 1')
         let contacts = {}
         let counter = 1;
         
@@ -198,6 +224,17 @@ const linkedin = {
                 return false;
             });
             await linkedin.page.waitFor(2000);
+            let url = linkedin.page.url().split('');
+            pageNum = [];
+            for (let i=(url.length - 1); i>=0; i--){
+                if(Number(url[i])){
+                    pageNum.unshift(url[i]);
+                } else {
+                    break
+                }
+            }
+            pageNum = pageNum.join('');
+            console.log('Scrapping page n° ' + pageNum);
 
         }
 

@@ -1,3 +1,5 @@
+// USED IF EMAIL NEEDS TO BE CHANGED (email model used not valid , ...)
+
 const fs = require('fs');
 
 let contacts // = ... ;

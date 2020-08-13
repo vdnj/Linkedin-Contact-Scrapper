@@ -19,7 +19,8 @@ RoadMap :
 
 NOTES
     
-    - Ajouter possibilité de filtre par entreprise actuelle
+    - Ajouter log de la page en cours de scrapping / pages totales
+    - Ajouter log 'probable qu un recaptcha soit demandé'
     
     - Faire capture d 'ecran video et garder sur Mac
 ----------------
