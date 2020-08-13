@@ -175,7 +175,6 @@ const linkedin = {
 
                     // Remplacement du nom
                 toUpdate = toUpdate.replace((toUpdate[nToReplaceIndex]+ toUpdate[nToReplaceIndex+1]), lastNamePart);
-                console.log(toUpdate) 
 
                     // Reconstitution
                 let email = toUpdate + base;
