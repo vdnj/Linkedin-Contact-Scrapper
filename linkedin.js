@@ -164,10 +164,20 @@ const linkedin = {
                     lastNamePart = lastNamePart.substr(0, lastNameChars);
                 }
                 
-                    // Remplacement du prénom et du nom
+                    // Remplacement du prénom
                 toUpdate = toUpdate.replace(('p'+ toUpdate[toUpdate.indexOf('p')+1]), namePart);
-                toUpdate = toUpdate.replace(('n'+ toUpdate[toUpdate.indexOf('n')+1]), lastNamePart);
 
+                    // Checker où se trouve le n à remplacer pour ne pas remplacer un du prénom
+                let nToReplaceIndex = toUpdate.split('').findIndex(char=>{
+                    return (char === '*' || Number(char))
+                })
+                nToReplaceIndex --;
+
+                    // Remplacement du nom
+                toUpdate = toUpdate.replace((toUpdate[nToReplaceIndex]+ toUpdate[nToReplaceIndex+1]), lastNamePart);
+                console.log(toUpdate) 
+
+                    // Reconstitution
                 let email = toUpdate + base;
 
                 // Partie assignation des résultats obtenus 
